@@ -19,12 +19,16 @@ class App extends Component {
     return (
       <div className="App">
         <h1>To-Do List</h1>
-        <TodoList todos={this.state.todos}/>
+        <TodoList 
+          todos={this.state.todos}
+          toggleComplete={this.toggleComplete}
+        />
         <TodoForm 
           todos={this.state.todos}
           value={this.state.todo}
           inputChangeHandler={this.inputChangeHandler}
           addTask={this.addTask}
+          removeTasks={this.removeTasks}
         />
       </div>
     );
@@ -35,6 +39,7 @@ class App extends Component {
     this.setState({[event.target.name] : event.target.value})
   }
 
+  // Add task button
   addTask = event => {
     event.preventDefault(); // prevent the page from refreshing every time adding a new to-do item
     let newTask = {
@@ -48,6 +53,31 @@ class App extends Component {
       todo: '' // reset todo to an empty string so it can be filled in again
     })
   }
+
+  // Remove tasks
+  removeTasks = event => {
+    event.preventDefault(); // prevent the page from refreshing
+    this.setState(prevState => {
+      return {
+        todos: prevState.todos.filter(todo => {
+          return !todo.completed
+        })
+      }
+    })
+  }
+
+  // Marking items as complete
+  toggleComplete = itemID => {
+    const todos = this.state.todos.map(todo => {
+      if(todo.id === itemID) {
+        todo.completed = !todo.completed;
+      }
+      return todo;
+    });
+    this.setState({todos, todo: ''});
+  };
+
+
 }
 
 export default App;
