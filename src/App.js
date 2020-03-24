@@ -2,6 +2,10 @@ import React, {Component} from 'react';
 import TodoList from './components/TodoComponents/TodoList';
 import TodoForm from './components/TodoComponents/TodoForm';
 
+/*
+This application keeps people who are taking online classes 
+    or working remotely full-time on track
+*/
 class App extends Component {
   constructor(props) {
     super(props);
@@ -77,7 +81,38 @@ class App extends Component {
     this.setState({todos, todo: ''});
   };
 
+  // local storage
+  addLocalStorage() {
+    for(let key in this.state) {
+      if(localStorage.hasOwnProperty(key)) {
+        let value = localStorage.getItem(key);
+        try {
+          value = JSON.parse(value);
+          this.setState({[key]: value});
+        }
+        catch(event) {
+          this.setState({[key]: value});
+        }
+      }
+    }  
+  }
 
+  saveLocalStorage() {
+    for(let key in this.state) {
+      localStorage.setItem(key, JSON.stringify(this.state[key]));
+    }
+  };
+
+  // Upon loading the application, this function will pull tasks that were saved to local storage and render to the page
+  componentDidMount() {
+    this.addLocalStorage();
+    window.addEventListener("beforeunload", this.saveLocalStorage.bind(this));
+  };
+
+  // Clean up
+  componentWillUnmount() {
+    window.removeEventListener("beforeunload", this.saveLocalStorage.bind(this));
+  };
 }
 
 export default App;
